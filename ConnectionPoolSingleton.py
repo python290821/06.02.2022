@@ -19,15 +19,21 @@ class ConnectionPoolSingleton(object):
                 cls._instance.connections = [MyConnection(i) for i in range(cls._max_connections)]
             return cls._instance
 
+    def get_free_count(self):
+        return len(self.connections)
+
+    def get_max_possible_connections(self):
+        return ConnectionPoolSingleton._max_connections
+
     def get_connection(self):
         # will return a connection and remove it from the list
-        # return cls._instance.connections ...
+        # return self.connections ...
         # lock
         pass
 
     def return_connection(self, conn):
         # will take the connection and add it to the list
-        # cls._instance.connections --> append
+        # self.connections --> append
         # lock
         pass
 
