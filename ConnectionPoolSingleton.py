@@ -1,9 +1,12 @@
 import threading
+import time
 from MyConnection import *
+
 
 class ConnectionPoolSingleton(object):
     _instance = None
     _lock = threading.Lock()
+    _lock_pool = threading.Lock()
     _max_connections = 20
 
     def __init__(self):
@@ -29,14 +32,21 @@ class ConnectionPoolSingleton(object):
         # will return a connection and remove it from the list
         # return self.connections ...
         # lock
-        pass
+        while True:
+            if len(self.connections) == 0:
+                time.sleep(1/2)
+                continue
+            with self._lock_pool:
+                if len(self.connections) > 0:
+                    return self.connections.pop(0)
 
     def return_connection(self, conn):
         # will take the connection and add it to the list
         # self.connections --> append
         # lock
-        pass
-
+        # tt
+        with self._lock_pool:
+            self.connections.append(conn) # list python is thread safe
 
 sing1 = ConnectionPoolSingleton.get_instance()
 sing2 = ConnectionPoolSingleton.get_instance()
